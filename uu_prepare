@@ -3,31 +3,33 @@
 START=99
 
 start() {
-  # Configure loopback
-  echo "config interface 'loopback'
-    option ifname 'lo'
-    option proto 'static'
-    option ipaddr '127.0.0.1'
-    option netmask '255.0.0.0'
-
-config interface 'lan'
-    option type 'bridge'
-    option ifname 'eth0'
-    option proto 'static'
-    option ipaddr '$UU_LAN_IPADDR'
-    option gateway '$UU_LAN_GATEWAY'
-    option netmask '$UU_LAN_NETMASK'
-    list dns '$UU_LAN_DNS'" > /etc/config/network
+  # Configure Network using UCI for safety
+  # This avoids syntax errors if variables like UU_LAN_DNS contain spaces
+  uci set network.lan.proto='static'
+  uci set network.lan.ipaddr="$UU_LAN_IPADDR"
+  uci set network.lan.gateway="$UU_LAN_GATEWAY"
+  uci set network.lan.netmask="$UU_LAN_NETMASK"
+  
+  # Handle DNS: Clear old list and add new ones (handles multiple IPs correctly)
+  uci -q delete network.lan.dns
+  for dns in $UU_LAN_DNS; do
+      uci add_list network.lan.dns="$dns"
+  done
+  
+  uci commit network
 
   # Restart network to apply changes
   /etc/init.d/network restart
+  
+  # CRITICAL: Wait for network interface to fully come up before restarting dnsmasq
+  # This fixes the race condition where dnsmasq starts before the IP is assigned
+  sleep 5
 
-  # Configure DHCP and DNS (optional but kept for compatibility)
+  # Configure DHCP and DNS
   uci set dhcp.lan.ignore=1
   uci commit dhcp
   /etc/init.d/dnsmasq restart
 
   # Ensure UU Plugin is running
-  # The IPK installation should have enabled it, but we start it here to be sure
   /etc/init.d/uuplugin start
 }
