@@ -27,12 +27,12 @@ config interface 'lan'
   uci commit dhcp
   /etc/init.d/dnsmasq restart
 
-  /etc/init.d/network restart
-  /etc/init.d/dnsmasq restart
-  
-  sleep 2
-
   # Ensure UU Plugin is running
   # The IPK installation should have enabled it, but we start it here to be sure
   /etc/init.d/uuplugin start
+
+  sleep 2
+
+  /etc/init.d/network restart
+  /etc/init.d/dnsmasq restart
 }
