@@ -12,9 +12,8 @@ services:
     environment:
       - UU_LAN_IPADDR=192.168.1.100 # Must match ipv4_address above
       - UU_LAN_GATEWAY=192.168.1.1 # Your Gateway
-    # Volumes usually not needed for basic operation unless persisting usage data specifically supported by the plugin
-    # volumes:
-    #   - ./data:/var/uuplugin # check if persistence is needed
+    volumes:
+      - uu-data:/var/uu
 
 networks:
   macvlan_net:
@@ -25,3 +24,6 @@ networks:
       config:
         - subnet: 192.168.1.0/24 # Change this to your subnet
           gateway: 192.168.1.1 # Change this to your gateway
+
+volumes:
+  uu-data:
