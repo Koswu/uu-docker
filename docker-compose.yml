@@ -1,0 +1,15 @@
+services:
+  uuplugin:
+    image: koswu/uuplugin:latest
+    container_name: uuplugin
+    restart: always
+    network_mode: "host"
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - UU_LAN_IPADDR=192.168.1.100 # Change this to your router IP or a specific IP if using macvlan
+      - UU_LAN_GATEWAY=192.168.1.1 # Your Gateway
+    # Volumes usually not needed for basic operation unless persisting usage data specifically supported by the plugin
+    # volumes:
+    #   - ./data:/var/uuplugin # check if persistence is needed

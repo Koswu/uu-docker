@@ -1,0 +1,6 @@
+.DS_Store
+*.log
+tmp/
+ref_*/
+.idea/
+.vscode/
