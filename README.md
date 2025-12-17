@@ -1,10 +1,11 @@
 # UU 加速器插件 Docker 镜像
 
-本项目基于 OpenWrt (x86_64) 构建网易 UU 加速器插件的 Docker 镜像。构建过程中会自动从 [ttc0419/uuplugin](https://github.com/ttc0419/uuplugin) 获取最新的插件包。
+本项目基于 OpenWrt (x86_64) 构建网易 UU 加速器插件的 Docker 镜像。构建过程中会自动从 [网易 UU 官方接口](https://router.uu.163.com/api/plugin?type=openwrt-x86_64) 获取最新的 OpenWrt x86_64 插件包。
 
 ## 特性
 
 - **基础镜像**: OpenWrt (x86_64)
+- **官方源**: 直接通过官方 API 获取插件，保证时效性。
 - **开箱即用**: 镜像定期构建并发布，无需手动编译。
 - **易于配置**: 通过环境变量设置网络参数。
 - **高版本兼容**: 自动配置防火墙规则，兼容 OpenWrt 高版本固件要求。
@@ -41,4 +42,4 @@ UU 主机加速 app 会检测手机网关进行通信判断是否安装的 UU �
 ## 致谢
 
 - [dianqk/uuplugin](https://github.com/dianqk/uuplugin): 提供原始 Docker 封装思路。
-- [ttc0419/uuplugin](https://github.com/ttc0419/uuplugin): 提供适配最新 OpenWrt 的插件包。
+- [ttc0419/uuplugin](https://github.com/ttc0419/uuplugin): 提供早期版本的插件包参考。

@@ -7,6 +7,8 @@ ENV UU_LAN_IPADDR=
 ENV UU_LAN_GATEWAY=
 ENV UU_LAN_NETMASK="255.255.255.0"
 ENV UU_LAN_DNS="119.29.29.29"
+# Ensure /usr/sbin and /usr/local/sbin are in PATH
+ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 USER root
 
@@ -22,20 +24,19 @@ RUN sed -i 's/\r$//' /etc/init.d/uu_prepare && \
     chmod +x /etc/init.d/uu_prepare && \
     /etc/init.d/uu_prepare enable
 
-# Download and install the latest UU Plugin IPK
-# Note: We use the release API to find the URL or fixed URL structure if stable.
-# Since the user wants to "fetching latest ipk", we can do this in the build step OR in the runtime script.
-# However, doing it in the build step produces a fixed image. Doing it in runtime allows "latest" on restart.
-# The user said "build a project that can get the latest ipk from the second repo's release and package docker image".
-# This implies build-time fetching.
-ARG UU_VERSION=latest
-
-# We use wget to fetch the IPK. The latest release tag is 'latest'.
-# URL pattern: https://github.com/ttc0419/uuplugin/releases/download/latest/uuplugin_latest-1_x86_64.ipk
-# If we want to be dynamic to the 'latest' release, we can stick to this URL.
-RUN wget https://github.com/ttc0419/uuplugin/releases/download/latest/uuplugin_latest-1_x86_64.ipk -O /tmp/uuplugin.ipk \
-    && opkg install /tmp/uuplugin.ipk \
-    && rm /tmp/uuplugin.ipk
+# Fetch and install the latest UU Plugin from the API
+RUN opkg install curl jq && \
+    url=$(curl -s "https://router.uu.163.com/api/plugin?type=openwrt-x86_64" | jq -r '.url') && \
+    echo "Downloading UU Plugin from $url" && \
+    wget -q "$url" -O /tmp/uu.tar.gz && \
+    tar -xzf /tmp/uu.tar.gz -C /tmp && \
+    mv /tmp/uu.conf /etc/uu.conf && \
+    mkdir -p /usr/local/sbin && \
+    mv /tmp/uuplugin /usr/local/sbin/uuplugin && \
+    mv /tmp/xtables-nft-multi /usr/local/sbin/xtables-nft-multi && \
+    chmod +x /usr/local/sbin/uuplugin /usr/local/sbin/xtables-nft-multi && \
+    rm /tmp/uu.tar.gz && \
+    opkg remove jq
 
 # Configure firewall defaults to ACCEPT
 RUN uci set firewall.@defaults[0].input='ACCEPT' \
@@ -46,7 +47,8 @@ RUN uci set firewall.@defaults[0].input='ACCEPT' \
 # Disable unnecessary services to keep the container light
 RUN /etc/init.d/odhcpd disable \
     && /etc/init.d/uhttpd disable \
-    && /etc/init.d/dropbear disable
+    && /etc/init.d/dropbear disable \
+    && /etc/init.d/firewall disable
 
 # The init process
 CMD ["/sbin/init"]

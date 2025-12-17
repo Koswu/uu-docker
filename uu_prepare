@@ -3,7 +3,7 @@
 START=99
 
 start() {
-  # Configure loopback
+  # Configure loopback and lan
   echo "config interface 'loopback'
     option ifname 'lo'
     option proto 'static'
@@ -22,17 +22,15 @@ config interface 'lan'
   # Restart network to apply changes
   /etc/init.d/network restart
 
-  # Configure DHCP and DNS (optional but kept for compatibility)
+  # Configure DHCP and DNS
   uci set dhcp.lan.ignore=1
   uci commit dhcp
   /etc/init.d/dnsmasq restart
 
-  # Ensure UU Plugin is running
-  # The IPK installation should have enabled it, but we start it here to be sure
-  /etc/init.d/uuplugin start
+  # Prepare environment
+  rm -rf /tmp/uu && mkdir -p /tmp/uu
 
-  sleep 2
-
-  /etc/init.d/network restart
-  /etc/init.d/dnsmasq restart
+  echo "Starting uuplugin..."
+  # Start uuplugin in background and redirect output to Docker logs
+  /usr/local/sbin/uuplugin /etc/uu.conf > /proc/1/fd/1 2>&1 &
 }
