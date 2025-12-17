@@ -30,7 +30,7 @@ config interface 'lan'
   # Prepare environment
   rm -rf /tmp/uu && mkdir -p /tmp/uu
 
-  echo "Starting uuplugin..."
-  # Start uuplugin in background and redirect output to Docker logs
-  /usr/local/sbin/uuplugin /etc/uu.conf > /proc/1/fd/1 2>&1 &
+  echo "Starting uuplugin (output to /dev/console)..." > /dev/console
+  # Start uuplugin in background and redirect output to /dev/console
+  /usr/local/sbin/uuplugin /etc/uu.conf > /dev/console 2>&1 &
 }
