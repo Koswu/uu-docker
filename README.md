@@ -34,6 +34,8 @@ Docker 会自动拉取最新的 `koswu/uuplugin:latest` 镜像并启动。
 
 启动后，打开手机或电脑端的 UU 主机加速 App，此时应该能检测到局域网内的插件并进行绑定。
 
+UU 主机加速 app 会检测手机网关进行通信判断是否安装的 UU 插件，所以你需要将手机网关和 DNS 指向刚刚创建的容器使用的 IP。 打开 app 点击安装路由器插件绑定即可。 此后为了避免影响手机上网，绑定完毕后，手机的网关和 DNS 可以改回原来的设定。
+
 ## 致谢
 
 - [dianqk/uuplugin](https://github.com/dianqk/uuplugin): 提供原始 Docker 封装思路。
