@@ -12,24 +12,13 @@
 
 ### 1. 创建配置文件
 
-新建一个 `docker-compose.yml` 文件，填入以下内容：
+直接下载或复制项目中的 [docker-compose.yml](docker-compose.yml) 文件。
 
-```yaml
-services:
-  uuplugin:
-    image: koswu/uuplugin:latest
-    container_name: uuplugin
-    restart: always
-    network_mode: "host"
-    privileged: true
-    cap_add:
-      - NET_ADMIN
-    environment:
-      - UU_LAN_IPADDR=192.168.1.100 # 请修改为分配给插件的 IP (需与主路由同网段)
-      - UU_LAN_GATEWAY=192.168.1.1  # 请修改为你的主路由 IP
-```
-
-> **注意**: 默认网络模式为 `host`，这是最简单的配置方式。如果你需要更复杂的网络拓扑（如 macvlan），请自行调整。
+> **注意**:
+> 1. 请务必根据你的实际网络环境修改 `parent` (物理网卡名称), `subnet` (子网), `gateway` (网关) 和 `ipv4_address` (IP地址)。
+> 2. `UU_LAN_IPADDR` 环境变量应与 `ipv4_address` 保持一致。
+> 3. Macvlan 模式下，宿主机通常无法直接 ping 通容器 IP，这是正常现象。
+> 4. 查询网卡名称命令: `ip addr` 或 `ifconfig`。
 
 ### 2. 启动
 

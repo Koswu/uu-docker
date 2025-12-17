@@ -3,13 +3,25 @@ services:
     image: koswu/uuplugin:latest
     container_name: uuplugin
     restart: always
-    network_mode: "host"
     privileged: true
+    networks:
+      macvlan_net:
+        ipv4_address: 192.168.1.100 # Change this to a specific IP in your subnet
     cap_add:
       - NET_ADMIN
     environment:
-      - UU_LAN_IPADDR=192.168.1.100 # Change this to your router IP or a specific IP if using macvlan
+      - UU_LAN_IPADDR=192.168.1.100 # Must match ipv4_address above
       - UU_LAN_GATEWAY=192.168.1.1 # Your Gateway
     # Volumes usually not needed for basic operation unless persisting usage data specifically supported by the plugin
     # volumes:
     #   - ./data:/var/uuplugin # check if persistence is needed
+
+networks:
+  macvlan_net:
+    driver: macvlan
+    driver_opts:
+      parent: eth0 # Change this to your physical network interface (e.g., eth0, eno1)
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24 # Change this to your subnet
+          gateway: 192.168.1.1 # Change this to your gateway
