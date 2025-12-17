@@ -14,7 +14,7 @@ USER root
 RUN mkdir -p /var/lock && opkg update
 
 # Install dependencies
-RUN opkg install libustream-mbedtls ca-certificates kmod-tun
+RUN opkg install libustream-mbedtls ca-certificates kmod-tun iptables-nft
 
 # Setup uu_prepare script
 ADD uu_prepare /etc/init.d/uu_prepare
