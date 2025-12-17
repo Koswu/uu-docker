@@ -37,9 +37,14 @@ RUN wget https://github.com/ttc0419/uuplugin/releases/download/latest/uuplugin_l
     && opkg install /tmp/uuplugin.ipk \
     && rm /tmp/uuplugin.ipk
 
+# Configure firewall defaults to ACCEPT
+RUN uci set firewall.@defaults[0].input='ACCEPT' \
+    && uci set firewall.@defaults[0].output='ACCEPT' \
+    && uci set firewall.@defaults[0].forward='ACCEPT' \
+    && uci commit firewall
+
 # Disable unnecessary services to keep the container light
 RUN /etc/init.d/odhcpd disable \
-    && /etc/init.d/firewall disable \
     && /etc/init.d/uhttpd disable \
     && /etc/init.d/dropbear disable
 
