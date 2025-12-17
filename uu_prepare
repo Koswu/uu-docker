@@ -31,6 +31,10 @@ config interface 'lan'
   # Prepare environment
   rm -rf /tmp/uu && mkdir -p /tmp/uu
 
+  # Forward syslog to Docker logs (wait for logd to be ready)
+  sleep 5
+  logread -f > /dev/console 2>&1 &
+
   procd_open_instance
   procd_set_param command /usr/local/sbin/uuplugin /etc/uu.conf
   procd_set_param stdout 1
@@ -38,6 +42,4 @@ config interface 'lan'
   procd_set_param respawn
   procd_close_instance
   
-  # Forward syslog to Docker logs (wait for logd to be ready)
-  ( sleep 5 && logread -f > /proc/1/fd/1 2>&1 ) &
 }

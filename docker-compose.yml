@@ -12,6 +12,7 @@ services:
     environment:
       - UU_LAN_IPADDR=192.168.1.100 # Must match ipv4_address above
       - UU_LAN_GATEWAY=192.168.1.1 # Your Gateway
+    tty: true
     volumes:
       - uu-data:/var/uu
 
